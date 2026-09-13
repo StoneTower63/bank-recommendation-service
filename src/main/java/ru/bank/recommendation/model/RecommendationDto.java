@@ -1,13 +1,14 @@
 package ru.bank.recommendation.model;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class RecommendationDto {
-    private long id;
+    private UUID id;
     private String name;
     private String text;
 
-    public RecommendationDto(long id, String name, String text) {
+    public RecommendationDto(UUID id, String name, String text) {
         this.id = id;
         this.name = name;
         this.text = text;
@@ -35,11 +36,11 @@ public class RecommendationDto {
                 '}';
     }
 
-    public long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
