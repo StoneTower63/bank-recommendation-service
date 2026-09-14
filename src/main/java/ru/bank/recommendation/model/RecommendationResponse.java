@@ -1,14 +1,17 @@
 package ru.bank.recommendation.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
+import java.util.UUID;
 
 public class RecommendationResponse {
-    private String userId;
-    private List<RecommendationDto> recommendationsDTO;
+    private UUID userId;
+    private List<RecommendationDto> recommendations;
 
-    public RecommendationResponse(String userId, List<RecommendationDto> recommendationsDTO) {
+    public RecommendationResponse(UUID userId, List<RecommendationDto> recommendations) {
         this.userId = userId;
-        this.recommendationsDTO = recommendationsDTO;
+        this.recommendations = recommendations;
     }
 
     @Override
@@ -26,24 +29,25 @@ public class RecommendationResponse {
     @Override
     public String toString() {
         return "RecommendationResponse{" +
-                "userId='" + userId + '\'' +
-                ", recommendationsDTO=" + recommendationsDTO +
+                "user_id='" + userId + '\'' +
+                ", recommendations=" + recommendations +
                 '}';
     }
 
-    public String getUserId() {
+    @JsonProperty("user_id")
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 
-    public List<RecommendationDto> getRecommendationsDTO() {
-        return recommendationsDTO;
+    public List<RecommendationDto> getRecommendations() {
+        return recommendations;
     }
 
-    public void setRecommendationsDTO(List<RecommendationDto> recommendationsDTO) {
-        this.recommendationsDTO = recommendationsDTO;
+    public void setRecommendations(List<RecommendationDto> recommendations) {
+        this.recommendations = recommendations;
     }
 }
