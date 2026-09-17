@@ -7,7 +7,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class BankRecommendationServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BankRecommendationServiceApplication.class, args);
-	}
+
+        SpringApplication.run(BankRecommendationServiceApplication.class, args);
+
+ 	}
+
 
 }
