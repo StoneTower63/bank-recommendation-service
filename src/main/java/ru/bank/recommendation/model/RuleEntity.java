@@ -1,5 +1,6 @@
 package ru.bank.recommendation.model;
-
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import jakarta.persistence.*;
 
 import java.util.UUID;
@@ -9,13 +10,14 @@ public class RuleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "product_name, nullable = false, length = 100")
+    @Column(name = "product_name", nullable = false, length = 100)
     private String productName;
     @Column(name="product_id", nullable = false)
     private UUID productId;
-    @Column(name="productText", length = 1000)
+    @Column(name="product_text", length = 1000)
     private String productText ;
-    @Column(name="rule", columnDefinition = "TEXT")
+    @Column(name="rule", columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     private String rule;
     public RuleEntity(){}
 
