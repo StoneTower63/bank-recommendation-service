@@ -5,13 +5,13 @@ import java.util.Objects;
 
 public class QueryDto {
     private String query;
-    private List<Object> arguments;
+    private List<String> arguments;
     private boolean negate;
 
     public QueryDto() {
     }
 
-    public QueryDto(String query, List<Object> arguments, boolean negate) {
+    public QueryDto(String query, List<String> arguments, boolean negate) {
         this.query = query;
         this.arguments = arguments;
         this.negate = negate;
@@ -25,11 +25,11 @@ public class QueryDto {
         this.query = query;
     }
 
-    public List<Object> getArguments() {
+    public List<String> getArguments() {
         return arguments;
     }
 
-    public void setArguments(List<Object> arguments) {
+    public void setArguments(List<String> arguments) {
         this.arguments = arguments;
     }
 
