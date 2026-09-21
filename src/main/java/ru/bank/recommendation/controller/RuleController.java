@@ -21,9 +21,16 @@ public class RuleController {
         RuleDto savedRule = ruleService.createRule(ruleDto);
         return ResponseEntity.status(HttpStatus.OK).body(savedRule);
     }
+
     @GetMapping
-    public ResponseEntity<RulesResponseDto> getAllRules(){
+    public ResponseEntity<RulesResponseDto> getAllRules() {
         RulesResponseDto rules = ruleService.getAllRules();
         return ResponseEntity.status(HttpStatus.OK).body(rules);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteRule(@PathVariable Long id) {
+        ruleService.deleteRule(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class RuleDto {
+    private Long id;
     @JsonProperty("product_name")
     private String productName;
     @JsonProperty("product_id")
@@ -23,6 +24,14 @@ public class RuleDto {
         this.productId = productId;
         this.productText = productText;
         this.rule = rule;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getProductName() {

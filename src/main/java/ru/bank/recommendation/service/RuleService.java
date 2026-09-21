@@ -1,4 +1,5 @@
 package ru.bank.recommendation.service;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.bank.recommendation.model.QueryDto;
@@ -38,6 +39,7 @@ public class RuleService {
 
         // 4. Создаем DTO для ответа
         RuleDto resultDto = new RuleDto();
+        resultDto.setId(savedEntity.getId());
         resultDto.setProductName(savedEntity.getProductName());
         resultDto.setProductId(savedEntity.getProductId());
         resultDto.setProductText(savedEntity.getProductText());
@@ -67,11 +69,13 @@ public class RuleService {
             throw new RuntimeException("Ошибка JSON", e);
         }
     }
-    public RulesResponseDto getAllRules(){
+
+    public RulesResponseDto getAllRules() {
         List<RuleEntity> listEntity = ruleRepository.findAll();
-        List <RuleDto> listRuleDto = new ArrayList<>();
+        List<RuleDto> listRuleDto = new ArrayList<>();
         for (RuleEntity entity : listEntity) {
             RuleDto ruleDto = new RuleDto();
+            ruleDto.setId(entity.getId());
             ruleDto.setProductName(entity.getProductName());
             ruleDto.setProductId(entity.getProductId());
             ruleDto.setProductText(entity.getProductText());
@@ -79,5 +83,9 @@ public class RuleService {
             listRuleDto.add(ruleDto);
         }
         return new RulesResponseDto(listRuleDto);
+    }
+
+    public void deleteRule(Long id) {
+        ruleRepository.deleteById(id);
     }
 }
