@@ -31,7 +31,7 @@ public class QueryChecker {
                 String productType = (String) query.getArguments().get(0);
                 String transactType = (String) query.getArguments().get(1);
                 ComparisonOperator operation = ComparisonOperator.fromSymbol((String) query.getArguments().get(2));
-                int numberCompare = (int) query.getArguments().get(3);
+                int numberCompare = Integer.parseInt(query.getArguments().get(3));
                 yield repository.checkTransactionSumCompare(userId, productType, transactType, operation, numberCompare);
             }
             case "TRANSACTION_SUM_COMPARE_DEPOSIT_WITHDRAW" -> {

@@ -26,7 +26,7 @@ public class RecommendationRepository {
 
     public int countTransactionsByUserAndProductType(UUID userId, String productType) {
         Integer result = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM transactions t JOIN products p ON t.product_id = p.id AND p.type = ? WHERE user_id = ?"
+                "SELECT COUNT(*) FROM transactions t JOIN products p ON t.product_id = p.id AND p.type = ? WHERE t.user_id = ?"
                 , Integer.class, productType, userId);
         return result != null ? result : 0;
     }
@@ -40,7 +40,7 @@ public class RecommendationRepository {
 
     public boolean checkTransactionSumCompare(UUID userId, String productType, String transactionType, ComparisonOperator operation, int numCompared) {
         String sql = "SELECT CASE WHEN SUM(t.amount) %s ? THEN 1 ELSE 0 END AS res FROM transactions t JOIN products p ON t.product_id = p.id AND p.type = ? WHERE t.user_id = ? AND t.type = ?";
-        Boolean result = jdbcTemplate.queryForObject(String.format(sql, operation.toString()), Boolean.class, numCompared, productType, userId, transactionType);
+        Boolean result = jdbcTemplate.queryForObject(String.format(sql, operation.getSymbol()), Boolean.class, numCompared, productType, userId, transactionType);
         return Boolean.TRUE.equals(result);
     }
 }

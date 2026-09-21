@@ -5,7 +5,9 @@ public enum ComparisonOperator {
 
     private final String symbol;
 
-    ComparisonOperator(String symbol) { this.symbol = symbol; }
+    ComparisonOperator(String symbol) {
+        this.symbol = symbol;
+    }
 
     public static ComparisonOperator fromSymbol(String s) {
         return switch (s) {
@@ -14,14 +16,21 @@ public enum ComparisonOperator {
             case "=" -> EQ;
             case ">=" -> GTE;
             case "<=" -> LTE;
-            default -> throw new IllegalArgumentException("Unknown operator: " + s); }; }
+            default -> throw new IllegalArgumentException("Unknown operator: " + s);
+        };
+    }
 
     public boolean compareQuantities(int left, int right) {
         return switch (this) {
-                case GT -> left > right;
-                case LT -> left < right;
-                case EQ -> Double.compare(left, right) == 0;
-                case GTE -> left >= right;
-                case LTE -> left <= right; };
+            case GT -> left > right;
+            case LT -> left < right;
+            case EQ -> Double.compare(left, right) == 0;
+            case GTE -> left >= right;
+            case LTE -> left <= right;
+        };
+    }
+
+    public String getSymbol() {
+        return symbol;
     }
 }
