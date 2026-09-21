@@ -4,10 +4,12 @@ import org.springframework.stereotype.Service;
 import ru.bank.recommendation.model.QueryDto;
 import ru.bank.recommendation.model.RuleDto;
 import ru.bank.recommendation.model.RuleEntity;
+import ru.bank.recommendation.model.RulesResponseDto;
 import ru.bank.recommendation.repository.RuleRepository;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -64,5 +66,18 @@ public class RuleService {
         } catch (JacksonException e) {
             throw new RuntimeException("Ошибка JSON", e);
         }
+    }
+    public RulesResponseDto getAllRules(){
+        List<RuleEntity> listEntity = ruleRepository.findAll();
+        List <RuleDto> listRuleDto = new ArrayList<>();
+        for (RuleEntity entity : listEntity) {
+            RuleDto ruleDto = new RuleDto();
+            ruleDto.setProductName(entity.getProductName());
+            ruleDto.setProductId(entity.getProductId());
+            ruleDto.setProductText(entity.getProductText());
+            ruleDto.setRule(convertJsonToList(entity.getRule()));
+            listRuleDto.add(ruleDto);
+        }
+        return new RulesResponseDto(listRuleDto);
     }
 }
