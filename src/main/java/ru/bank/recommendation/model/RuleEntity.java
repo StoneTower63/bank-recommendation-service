@@ -57,7 +57,7 @@ public class RuleEntity {
         return rule;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
