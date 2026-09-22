@@ -13,6 +13,7 @@ public class CacheKey {
         this.transactionType = null;
     }
 
+
     public CacheKey(String userId, String productType, String transactionType) {
         this.userId = userId;
         this.productType = productType;

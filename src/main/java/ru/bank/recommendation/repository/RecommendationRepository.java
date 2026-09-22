@@ -24,6 +24,7 @@ public class RecommendationRepository {
 
     private final Cache<CacheKey, Boolean> checkCache;
 
+
     @Autowired
     public RecommendationRepository(@Qualifier("recommendationsJdbcTemplate") JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
