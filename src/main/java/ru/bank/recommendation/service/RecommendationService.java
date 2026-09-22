@@ -63,7 +63,7 @@ public class RecommendationService {
 
     private RecommendationDto toRecommendationDto(RuleEntity entity) {
         RecommendationDto dto = new RecommendationDto();
-        dto.setId(UUID.randomUUID());
+        dto.setId(entity.getProductId());
         dto.setName(entity.getProductName());
         dto.setText(entity.getProductText());
         return dto;
