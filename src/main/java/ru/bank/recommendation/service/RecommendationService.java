@@ -67,6 +67,7 @@ public class RecommendationService {
         dto.setName(entity.getProductName());
         dto.setText(entity.getProductText());
         return dto;
+
     }
 
 }
