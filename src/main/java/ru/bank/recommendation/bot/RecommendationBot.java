@@ -24,14 +24,14 @@ public class RecommendationBot implements LongPollingSingleThreadUpdateConsumer 
 
     private final RecommendationService recommendationService;
 
-    private static final String GREETING = "\uD83E\uDD16 *Привет! Я бот банка «Стар».*";
+    private static final String GREETING = "\uD83E\uDD16 *Привет\\! Я бот банка «Стар»\\.*";
 
     private static final String HELP_TEXT = "\n\n"
-            + "_Я помогу подобрать для вас новые банковские продукты._\n"
+            + "_Я помогу подобрать для вас новые банковские продукты\\._\n"
             + "\n"
-            + "Команда:\n"
-            + "`/recommend <Имя Фамилия>` — получить рекомендации.\n"
-            + "Например: `/recommend Иван Иванов`";
+            + "Команда\\:\n"
+            + "`\\/recommend \\<Имя Фамилия\\>` — получить рекомендации\\.\n"
+            + "Например\\: `\\/recommend Иван Иванов`";
 
     public RecommendationBot(TelegramClient telegramClient, RecommendationRepository recommendationRepository, RecommendationService recommendationService) {
         this.telegramClient = telegramClient;
@@ -59,7 +59,7 @@ public class RecommendationBot implements LongPollingSingleThreadUpdateConsumer 
         SendMessage message = SendMessage.builder()
                 .chatId(chatId)
                 .text(text)
-                .parseMode(ParseMode.MARKDOWN)
+                .parseMode(ParseMode.MARKDOWNV2)
                 .build();
         try {
             telegramClient.execute(message);
@@ -72,7 +72,7 @@ public class RecommendationBot implements LongPollingSingleThreadUpdateConsumer 
         UserDto user = findUserByCommand(commandText);
 
         if (user == null) {
-            sendMessage(chatId, "Пользователь не найден");
+            sendMessage(chatId, "Пользователь не найден\\!");
             return;
         }
         // Получаем рекомендации от сервиса
@@ -121,7 +121,7 @@ public class RecommendationBot implements LongPollingSingleThreadUpdateConsumer 
         String safeLastName = escapeMarkdown(user.lastName());
 
         answer.append("Здравствуйте ").append(safeFirstName).append(" ").append(safeLastName).append("\n");
-        answer.append("Новые продукты для вас:\n");
+        answer.append("Новые продукты для вас\\:\n");
 
         if (recommendations == null || recommendations.isEmpty()) {
             answer.append("Пока нет новых предложений");
