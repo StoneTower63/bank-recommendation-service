@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import ru.bank.recommendation.cache.CacheKey;
 import ru.bank.recommendation.enums.ComparisonOperator;
 import ru.bank.recommendation.model.RecommendationDto;
+import ru.bank.recommendation.model.UserDto;
 
 import java.util.List;
 import java.util.UUID;
@@ -84,5 +85,21 @@ public class RecommendationRepository {
                     Boolean.class, numCompared, productType, userId, transactionType);
             return Boolean.TRUE.equals(result);
         });
+    }
+
+    public List<UserDto> findUsersByName(String firstName, String lastName) {
+        String sql = """
+        SELECT id, first_name, last_name
+        FROM users
+        WHERE LOWER(first_name) = LOWER(?)
+          AND LOWER(last_name) = LOWER(?)
+        """;
+        return jdbcTemplate.query(sql,
+                (rs, rowNum) -> new UserDto(
+                        rs.getObject("id", UUID.class),
+                        rs.getString("first_name"),
+                        rs.getString("last_name")
+                ),
+                firstName, lastName);
     }
 }
