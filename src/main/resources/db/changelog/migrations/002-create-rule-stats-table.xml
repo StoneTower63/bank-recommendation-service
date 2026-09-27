@@ -5,11 +5,11 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="002-create-rule-stats-table" author="arina_baglaeva"> <!-- Замени на свой ник -->
+    <changeSet id="002-create-rule-stats-table" author="arina_baglaeva"> 
         <createTable tableName="rule_stats">
             <column name="id" type="bigserial" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
-                <!-- В PostgreSQL bigserial автоматически создает последовательность -->
+                
             </column>
             <column name="rule_id" type="bigint">
                 <constraints nullable="false" unique="true"
