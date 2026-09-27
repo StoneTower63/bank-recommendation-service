@@ -91,6 +91,7 @@ public class RecommendationRepository {
         sumCache.invalidateAll();
         checkCache.invalidateAll();
         System.out.println("ВСЕ КЭШИ ОЧИЩЕНЫ!");
+    }
 
     public List<UserDto> findUsersByName(String firstName, String lastName) {
         String sql = """
