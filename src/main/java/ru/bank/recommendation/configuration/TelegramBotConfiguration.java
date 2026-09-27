@@ -7,6 +7,8 @@ import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import ru.bank.recommendation.bot.RecommendationBot;
+import ru.bank.recommendation.repository.RecommendationRepository;
+import ru.bank.recommendation.service.RecommendationService;
 
 @Configuration
 public class TelegramBotConfiguration {
@@ -24,9 +26,15 @@ public class TelegramBotConfiguration {
     @Bean
     public RecommendationBot recommendationBot(TelegramClient telegramClient,
                                                TelegramBotsLongPollingApplication application,
+                                               RecommendationRepository recommendationRepository,
+                                               RecommendationService recommendationService,
                                                @Value("${telegram.bot.username}") String botUsername,
                                                @Value("${telegram.bot.token}") String botToken) {
-        RecommendationBot bot = new RecommendationBot(telegramClient);
+        RecommendationBot bot = new RecommendationBot(
+                telegramClient,
+                recommendationRepository,
+                recommendationService
+        );
 
         try {
             application.registerBot(botToken, bot);
