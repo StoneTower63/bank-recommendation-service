@@ -86,6 +86,11 @@ public class RecommendationRepository {
             return Boolean.TRUE.equals(result);
         });
     }
+    public void clearAllCaches() {
+        countCache.invalidateAll();
+        sumCache.invalidateAll();
+        checkCache.invalidateAll();
+        System.out.println("ВСЕ КЭШИ ОЧИЩЕНЫ!");
 
     public List<UserDto> findUsersByName(String firstName, String lastName) {
         String sql = """
