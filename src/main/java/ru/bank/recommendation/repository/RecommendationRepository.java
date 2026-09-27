@@ -85,4 +85,11 @@ public class RecommendationRepository {
             return Boolean.TRUE.equals(result);
         });
     }
+    // Метод для полной очистки всех кэшей (из задачи #57)
+    public void clearAllCaches() {
+        countCache.invalidateAll();
+        sumCache.invalidateAll();
+        checkCache.invalidateAll();
+        System.out.println("🧹 ВСЕ КЭШИ ОЧИЩЕНЫ!");
+    }
 }
