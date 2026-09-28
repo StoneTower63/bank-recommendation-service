@@ -20,11 +20,13 @@ public class RecommendationService {
     private final RuleRepository ruleRepository;
     private final QueryChecker queryChecker;
     private final ObjectMapper objectMapper;
+    private final RuleStatsService ruleStatsService;
 
-    public RecommendationService(RuleRepository ruleRepository, QueryChecker queryChecker, ObjectMapper objectMapper) {
+    public RecommendationService(RuleRepository ruleRepository, QueryChecker queryChecker, ObjectMapper objectMapper, RuleStatsService ruleStatsService) {
         this.ruleRepository = ruleRepository;
         this.queryChecker = queryChecker;
         this.objectMapper = objectMapper;
+        this.ruleStatsService = ruleStatsService;
     }
 
     public RecommendationResponse getUserRecommendations(UUID userId) {
@@ -39,6 +41,7 @@ public class RecommendationService {
 
         List<RecommendationDto> matchedRecommendations = listRule.stream()
                 .filter(rule -> areAllQueriesPassed(userId, rule.getRule(), queryChecker, objectMapper, typeRef))
+                .peek(rule -> ruleStatsService.incrementCount(rule.getId()))
                 .map(this::toRecommendationDto)
                 .collect(Collectors.toList());
 
