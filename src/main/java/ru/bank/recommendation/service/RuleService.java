@@ -2,11 +2,9 @@ package ru.bank.recommendation.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.bank.recommendation.model.QueryDto;
-import ru.bank.recommendation.model.RuleDto;
-import ru.bank.recommendation.model.RuleEntity;
-import ru.bank.recommendation.model.RulesResponseDto;
+import ru.bank.recommendation.model.*;
 import ru.bank.recommendation.repository.RuleRepository;
+import ru.bank.recommendation.repository.RuleStatsRepository;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
@@ -17,11 +15,12 @@ import java.util.List;
 public class RuleService {
     private final RuleRepository ruleRepository;
     private final ObjectMapper objectMapper;
-
+private final RuleStatsRepository ruleStatsRepository;
     @Autowired
-    public RuleService(RuleRepository ruleRepository, ObjectMapper objectMapper) {
+    public RuleService(RuleRepository ruleRepository, ObjectMapper objectMapper, RuleStatsRepository ruleStatsRepository ) {
         this.ruleRepository = ruleRepository;
         this.objectMapper = objectMapper;
+        this.ruleStatsRepository = ruleStatsRepository;
     }
 
     public RuleDto createRule(RuleDto ruleDto) {
@@ -87,5 +86,9 @@ public class RuleService {
 
     public void deleteRule(Long id) {
         ruleRepository.deleteById(id);
+    }
+    public RuleStatsResponse getStats() {
+        List<RuleStatsDto> stats = ruleStatsRepository.findAllWithStats();
+        return new RuleStatsResponse(stats);
     }
 }

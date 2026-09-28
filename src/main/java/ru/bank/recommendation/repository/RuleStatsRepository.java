@@ -5,8 +5,10 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import ru.bank.recommendation.model.RuleStatsDto;
 import ru.bank.recommendation.model.RuleStatsEntity;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -19,4 +21,14 @@ public interface RuleStatsRepository extends JpaRepository<RuleStatsEntity, Long
     int incrementCount(@Param("ruleId") Long ruleId);
 
     void deleteByRuleId(Long ruleId);
+
+    @Query("""
+            SELECT new ru.bank.recommendation.model.RuleStatsDto(
+                r.id,
+                COALESCE(s.count, 0L)
+            )
+            FROM RuleEntity r
+            LEFT JOIN RuleStatsEntity s ON s.rule.id = r.id
+            """)
+    List<RuleStatsDto> findAllWithStats();
 }

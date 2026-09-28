@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.bank.recommendation.model.RuleDto;
+import ru.bank.recommendation.model.RuleStatsResponse;
 import ru.bank.recommendation.model.RulesResponseDto;
 import ru.bank.recommendation.service.RuleService;
 
@@ -32,5 +33,9 @@ public class RuleController {
     public ResponseEntity<Void> deleteRule(@PathVariable Long id) {
         ruleService.deleteRule(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+    @GetMapping("/stats")
+    public ResponseEntity<RuleStatsResponse> getStats() {
+        return ResponseEntity.ok(ruleService.getStats());
     }
 }
