@@ -20,7 +20,9 @@ public interface RuleStatsRepository extends JpaRepository<RuleStatsEntity, Long
     @Query("UPDATE RuleStatsEntity r SET r.count = r.count + 1 WHERE r.rule.id = :ruleId")
     int incrementCount(@Param("ruleId") Long ruleId);
 
-    void deleteByRuleId(Long ruleId);
+    @Modifying
+    @Query("DELETE FROM RuleStatsEntity s WHERE s.rule.id = :ruleId")
+    void deleteByRuleId(@Param("ruleId") Long ruleId);
 
     @Query("""
             SELECT new ru.bank.recommendation.model.RuleStatsDto(

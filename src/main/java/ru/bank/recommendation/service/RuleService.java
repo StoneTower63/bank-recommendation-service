@@ -1,5 +1,6 @@
 package ru.bank.recommendation.service;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.bank.recommendation.model.*;
@@ -15,9 +16,10 @@ import java.util.List;
 public class RuleService {
     private final RuleRepository ruleRepository;
     private final ObjectMapper objectMapper;
-private final RuleStatsRepository ruleStatsRepository;
+    private final RuleStatsRepository ruleStatsRepository;
+
     @Autowired
-    public RuleService(RuleRepository ruleRepository, ObjectMapper objectMapper, RuleStatsRepository ruleStatsRepository ) {
+    public RuleService(RuleRepository ruleRepository, ObjectMapper objectMapper, RuleStatsRepository ruleStatsRepository) {
         this.ruleRepository = ruleRepository;
         this.objectMapper = objectMapper;
         this.ruleStatsRepository = ruleStatsRepository;
@@ -84,9 +86,12 @@ private final RuleStatsRepository ruleStatsRepository;
         return new RulesResponseDto(listRuleDto);
     }
 
+    @Transactional
     public void deleteRule(Long id) {
+        ruleStatsRepository.deleteByRuleId(id);
         ruleRepository.deleteById(id);
     }
+
     public RuleStatsResponse getStats() {
         List<RuleStatsDto> stats = ruleStatsRepository.findAllWithStats();
         return new RuleStatsResponse(stats);
