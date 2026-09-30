@@ -1,5 +1,6 @@
 package ru.bank.recommendation.service;
 
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,23 +28,32 @@ class RuleDeletionIntegrationTest {
     @Autowired
     private RuleStatsRepository ruleStatsRepository;
 
+    @Autowired
+    private EntityManager entityManager;
+
     @Test
     @DisplayName("При удалении правила статистика удаляется")
     void shouldDeleteStatsWhenRuleDeleted() {
         RuleEntity rule = new RuleEntity("Тест-удаление", UUID.randomUUID(), "Текст", "[]");
         RuleEntity savedRule = ruleRepository.save(rule);
+        ruleRepository.flush();
+
         Long ruleId = savedRule.getId();
 
         RuleStatsEntity stats = new RuleStatsEntity();
         stats.setRule(savedRule);
         stats.setCount(5L);
         ruleStatsRepository.save(stats);
+        ruleStatsRepository.flush();
 
         assertThat(ruleStatsRepository.findByRuleId(ruleId))
                 .as("Статистика должна существовать до удаления")
                 .isPresent();
 
+        entityManager.detach(stats);
         ruleService.deleteRule(ruleId);
+        entityManager.flush();
+        entityManager.clear();
 
         assertThat(ruleRepository.findById(ruleId))
                 .as("Правило должно быть удалено")

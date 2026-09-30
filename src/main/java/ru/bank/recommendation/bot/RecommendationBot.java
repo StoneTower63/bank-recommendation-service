@@ -1,5 +1,6 @@
 package ru.bank.recommendation.bot;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
@@ -16,6 +17,7 @@ import ru.bank.recommendation.service.RecommendationService;
 import java.util.List;
 
 @Component
+@ConditionalOnProperty(name = "telegram.bot.enabled", havingValue = "true")
 public class RecommendationBot implements LongPollingSingleThreadUpdateConsumer {
 
     private final TelegramClient telegramClient;

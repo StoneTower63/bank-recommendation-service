@@ -1,6 +1,7 @@
 package ru.bank.recommendation.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
@@ -11,6 +12,7 @@ import ru.bank.recommendation.repository.RecommendationRepository;
 import ru.bank.recommendation.service.RecommendationService;
 
 @Configuration
+@ConditionalOnProperty(name = "telegram.bot.enabled", havingValue = "true", matchIfMissing = false)
 public class TelegramBotConfiguration {
 
     @Bean

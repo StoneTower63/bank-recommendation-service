@@ -1,5 +1,6 @@
 package ru.bank.recommendation.controller;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,24 +18,21 @@ public class ManagementController {
     private final BuildProperties buildProperties;
 
     public ManagementController(RecommendationRepository recommendationRepository,
-                                BuildProperties buildProperties) {
+                                ObjectProvider<BuildProperties> buildPropertiesProvider) {
         this.recommendationRepository = recommendationRepository;
-        this.buildProperties = buildProperties;
+        this.buildProperties = buildPropertiesProvider.getIfAvailable();
     }
 
-    // #57
     @PostMapping("/clear-caches")
     public ResponseEntity<Void> clearCaches() {
         recommendationRepository.clearAllCaches();
         return ResponseEntity.ok().build();
     }
 
-    // #58
     @GetMapping("/info")
     public ResponseEntity<ServiceInfoResponse> getInfo() {
-        return ResponseEntity.ok(new ServiceInfoResponse(
-                buildProperties.getName(),
-                buildProperties.getVersion()
-        ));
+        String name = buildProperties != null ? buildProperties.getName() : "bank-recommendation-service";
+        String version = buildProperties != null ? buildProperties.getVersion() : "unknown";
+        return ResponseEntity.ok(new ServiceInfoResponse(name, version));
     }
 }

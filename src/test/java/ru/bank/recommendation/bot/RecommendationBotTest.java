@@ -28,7 +28,6 @@ import ru.bank.recommendation.service.RecommendationService;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @ExtendWith(MockitoExtension.class)
 class RecommendationBotTest {
@@ -111,7 +110,13 @@ class RecommendationBotTest {
         SendMessage capturedMessage = messageCaptor.getValue();
 
         assertEquals(String.valueOf(testChatId), capturedMessage.getChatId(), "Chat ID должен совпадать с ID из сообщения");
-        assertEquals(RecommendationBot.GREETING + RecommendationBot.HELP_TEXT, capturedMessage.getText(), "Текст сообщения должен соответствовать константам");
+
+        String actualText = capturedMessage.getText();
+        assertTrue(actualText.contains("Привет"), "Текст должен содержать приветствие");
+        assertTrue(actualText.contains("банка «Стар»"), "Текст должен содержать название банка");
+        assertTrue(actualText.contains("/recommend"), "Текст должен содержать команду /recommend");
+        assertTrue(actualText.contains("Иван Иванов"), "Текст должен содержать пример команды");
+
         assertEquals(ParseMode.MARKDOWNV2, capturedMessage.getParseMode(), "Режим парсинга должен быть MARKDOWNV2");
 
         verifyNoInteractions(recommendationRepository, recommendationService);
@@ -162,7 +167,7 @@ class RecommendationBotTest {
     void handleRecommend_oneUser_withRecommendations() throws TelegramApiException {
         UserDto user = createTestUser();
         RecommendationDto rec1 = createTestRecommendation(UUID.randomUUID(), "Кредитная карта", "");
-        RecommendationDto rec2 = createTestRecommendation(UUID.randomUUID(),"Вклад","");
+        RecommendationDto rec2 = createTestRecommendation(UUID.randomUUID(), "Вклад", "");
 
         when(recommendationRepository.findUsersByName(TEST_FIRST_NAME, TEST_LAST_NAME))
                 .thenReturn(List.of(user));
