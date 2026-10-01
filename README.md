@@ -2,22 +2,24 @@
 
 Микросервис рекомендаций банковских продуктов для банка «Стар».
 
-Сервис рекомендует клиентам новые банковские продукты на основе их финансового поведения.
+Сервис рекомендует клиентам новые банковские продукты на основе их финансового поведения: транзакций, типов продуктов,
+сумм пополнений и трат.
 
 ## Стек технологий
 
-- Java 17
+- Java 17 (запуск на OpenJDK 24)
 - Spring Boot 4.1.1
 - Spring Web (REST API)
-- Spring Data JPA / Hibernate — для работы с правилами рекомендаций
-- JDBC (JdbcTemplate) — для чтения данных клиентов (H2, read-only)
-- PostgreSQL 15 — база данных для динамических правил (read/write)
-- H2 Database — встроенная БД для данных клиентов и транзакций (read-only)
-- Liquibase — миграции схемы БД
-- Caffeine — кеширование SQL-запросов
+- Spring Data JPA / Hibernate — динамические правила рекомендаций
+- Spring Data JDBC + JdbcTemplate — чтение данных клиентов (H2, read-only)
+- PostgreSQL 15 — read/write база для динамических правил
+- H2 Database 2.4.240 — read-only база с данными клиентов
+- Liquibase 5.0.3 — миграции схемы PostgreSQL
+- Caffeine 3.2.4 — кеширование SQL-запросов к H2
 - Jackson — работа с JSON
+- Telegram Bot API (`telegrambots-longpolling` 7.10.0 + `telegrambots-client` 7.10.0)
 - Maven
-- JUnit 5, Mockito
+- JUnit 5, Mockito 5.23.0
 
 ## Требования для запуска
 
@@ -25,30 +27,109 @@
 - **PostgreSQL 15** — установлен и запущен локально
     - База данных: `BRSbase`
     - Пользователь: `bankClient`, пароль: `clientPass`
-- **Файл `transaction.mv.db`** — в корне проекта (H2)
+- **Файл `transaction.mv.db`** — в корне проекта (H2, ~13 МБ)
+- **VPN** — обязателен для работы Telegram Bot API (`api.telegram.org` заблокирован в РФ)
+- **Свой Telegram-бот** — получить токен у [@BotFather](https://t.me/BotFather)
+- **Docker Desktop** — не требуется (тесты идут против локальной PostgreSQL)
 
 ## Запуск
 
 1. Клонировать репозиторий:
+   ```
    git clone https://github.com/StoneTower63/bank-recommendation-service.git
+   ```
+
 2. Открыть проект в IntelliJ IDEA.
 
 3. Убедиться, что PostgreSQL запущен и база `BRSbase` создана.
 
-4. Запустить главный класс `BankRecommendationServiceApplication`.
+4. Создать `src/main/resources/application-local.properties` со своим токеном бота:
+   ```properties
+   telegram.bot.token=ВАШ_ТОКЕН
+   ```
+   Файл **не коммитится** — он в `.gitignore`.
 
-5. Сервис доступен на `http://localhost:8080`.
+5. В IntelliJ: **Run → Edit Configurations → Active profiles = `local`**.
 
-6. Liquibase автоматически создаст таблицу `rules` в PostgreSQL при старте.
+6. Запустить главный класс `BankRecommendationServiceApplication`.
+
+7. Сервис доступен на `http://localhost:8080`.
+
+8. Liquibase автоматически применит миграции к PostgreSQL при старте.
+
+> **Без VPN** бот не зарегистрируется с ошибкой `TelegramApiErrorResponseException`. Это ожидаемо — включите VPN и
+> перезапустите.
+>
+> **Без токена** приложение можно запустить, отключив бота: добавьте в Run Configuration `-Dtelegram.bot.enabled=false`
+> (VM options).
 
 ## REST API
 
-- `GET /recommendation/{user_id}` — получить рекомендации для клиента
-- `POST /rule` — создать динамическое правило
-- `GET /rule` — получить список всех правил
-- `DELETE /rule/{id}` — удалить правило
+| Метод    | Путь                        | Описание                                              |
+|----------|-----------------------------|-------------------------------------------------------|
+| `GET`    | `/recommendation/{user_id}` | Рекомендации для клиента по UUID                      |
+| `POST`   | `/rule`                     | Создать динамическое правило                          |
+| `GET`    | `/rule`                     | Список всех правил                                    |
+| `DELETE` | `/rule/{id}`                | Удалить правило (со статистикой)                      |
+| `GET`    | `/rule/stats`               | Статистика срабатываний всех правил (включая count=0) |
+| `POST`   | `/management/clear-caches`  | Очистить все Caffeine-кеши                            |
+| `GET`    | `/management/info`          | Информация о сборке (version, name, build time)       |
 
-Подробное описание — в [Wiki](https://github.com/StoneTower63/bank-recommendation-service/wiki).
+Подробное описание эндпоинтов — в [Wiki](https://github.com/StoneTower63/bank-recommendation-service/wiki/REST-API).
+
+## Telegram-бот
+
+- **Имя**: Bank Star Recommendation Bot
+- **Username**: [@bank_star_recommend_bot](https://t.me/bank_star_recommend_bot)
+- **Токен**: в `application-local.properties` (не коммитится)
+
+Команды:
+
+| Команда                    | Действие                                     |
+|----------------------------|----------------------------------------------|
+| `/start`                   | Приветствие и краткая справка                |
+| `/recommend <Имя Фамилия>` | Список рекомендованных продуктов для клиента |
+
+Сценарии `/recommend`:
+
+- **1 найден, есть рекомендации** → список продуктов
+- **1 найден, нет рекомендаций** → «Пока нет новых предложений»
+- **0 найдено** → «Пользователь не найден!»
+- **>1 найдено** → «Пользователь не найден!» (нужно уточнить ФИО)
+
+## Тестирование
+
+Запуск всех тестов:
+
+```
+./mvnw test
+```
+
+Что покрыто:
+
+- Unit-тесты сервисов и DTO (`QueryCheckerTest`, `RuleServiceTest`, `RuleStatsServiceTest`, `*DtoTest`)
+- Тесты репозиториев (`RuleRepositoryTest`, `RuleStatsRepositoryTest`, `RecommendationRepositoryTest`)
+- Controller-тесты (`RuleControllerTest`, `RuleControllerStatsTest`, `ManagementControllerClearCachesTest`,
+  `ManagementControllerInfoTest`, `RecommendationControllerTest`)
+- Интеграционные тесты (`RecommendationIntegrationTest`, `RuleDeletionIntegrationTest`)
+- Тесты бота (`RecommendationBotTest`)
+
+> Тесты работают с **локальной PostgreSQL** (`BRSbase`) — убедитесь, что она запущена. Переключение на in-memory H2 не
+> поддерживается из-за `JSONB` в миграциях Liquibase.
+
+## Структура проекта
+
+```
+ru.bank.recommendation
+├── bot/              — RecommendationBot (Telegram)
+├── cache/            — CacheKey
+├── configuration/    — конфиги DataSource (PostgreSQL @Primary, H2), Telegram
+├── controller/       — RecommendationController, RuleController, ManagementController
+├── enums/            — ComparisonOperator
+├── model/            — DTO и JPA-сущности
+├── repository/       — JPA-репозитории + JdbcTemplate-репозиторий
+└── service/          — RecommendationService, RuleService, RuleStatsService, QueryChecker
+```
 
 ## Документация
 
@@ -67,4 +148,4 @@
 
 ## Статус
 
-Учебный проект Skypro. Спринт 1 и Спринт 2 завершены.
+Учебный проект Skypro. Спринт 1, Спринт 2 и Спринт 3 завершены.
