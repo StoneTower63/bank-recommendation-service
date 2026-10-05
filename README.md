@@ -30,15 +30,11 @@
 - **Файл `transaction.mv.db`** — в корне проекта (H2, ~13 МБ)
 - **VPN** — обязателен для работы Telegram Bot API (`api.telegram.org` заблокирован в РФ)
 - **Свой Telegram-бот** — получить токен у [@BotFather](https://t.me/BotFather)
-- **Docker Desktop** — не требуется (тесты идут против локальной PostgreSQL)
 
 ## Запуск
 
 1. Клонировать репозиторий:
-   ```
    git clone https://github.com/StoneTower63/bank-recommendation-service.git
-   ```
-
 2. Открыть проект в IntelliJ IDEA.
 
 3. Убедиться, что PostgreSQL запущен и база `BRSbase` создана.
@@ -47,9 +43,10 @@
    ```properties
    telegram.bot.token=ВАШ_ТОКЕН
    ```
-   Файл **не коммитится** — он в `.gitignore`.
 
-5. В IntelliJ: **Run → Edit Configurations → Active profiles = `local`**.
+Файл **не коммитится** — он в `.gitignore`.
+
+5. В IntelliJ: **Run -> Edit Configurations -> Active profiles = `local`**.
 
 6. Запустить главный класс `BankRecommendationServiceApplication`.
 
@@ -75,7 +72,7 @@
 | `POST`   | `/management/clear-caches`  | Очистить все Caffeine-кеши                            |
 | `GET`    | `/management/info`          | Информация о сборке (version, name, build time)       |
 
-Подробное описание эндпоинтов — в [Wiki](https://github.com/StoneTower63/bank-recommendation-service/wiki/REST-API).
+Полная документация в формате OpenAPI — на странице Wiki «REST API».
 
 ## Telegram-бот
 
@@ -92,10 +89,10 @@
 
 Сценарии `/recommend`:
 
-- **1 найден, есть рекомендации** → список продуктов
-- **1 найден, нет рекомендаций** → «Пока нет новых предложений»
-- **0 найдено** → «Пользователь не найден!»
-- **>1 найдено** → «Пользователь не найден!» (нужно уточнить ФИО)
+- **1 найден, есть рекомендации** -> список продуктов
+- **1 найден, нет рекомендаций** -> «Пока нет новых предложений»
+- **0 найдено** -> «Пользователь не найден!»
+- **>1 найдено** -> «Пользователь не найден!» (нужно уточнить ФИО)
 
 ## Тестирование
 
@@ -114,8 +111,29 @@
 - Интеграционные тесты (`RecommendationIntegrationTest`, `RuleDeletionIntegrationTest`)
 - Тесты бота (`RecommendationBotTest`)
 
+Всего 57 тестов.
+
 > Тесты работают с **локальной PostgreSQL** (`BRSbase`) — убедитесь, что она запущена. Переключение на in-memory H2 не
 > поддерживается из-за `JSONB` в миграциях Liquibase.
+
+## Архитектура
+
+Приложение состоит из трёх слоёв:
+
+- **Контроллеры** — REST-эндпоинты (`RecommendationController`, `RuleController`, `ManagementController`).
+- **Сервисы** — бизнес-логика (`RecommendationService`, `RuleService`, `RuleStatsService`, `QueryChecker`,
+  `RecommendationBot`).
+- **Репозитории** — работа с БД (`RecommendationRepository` через JdbcTemplate, `RuleRepository` и `RuleStatsRepository`
+  через JPA).
+
+Используются две базы данных: H2 (read-only, данные клиентов) и PostgreSQL (read/write, правила и статистика).
+
+Компонентная диаграмма и диаграмма деятельности — на странице Wiki «Архитектура».
+
+## Развёртывание
+
+Инструкция по развёртыванию (требуемые сервисы, команды сборки и запуска, переменные среды) — на странице Wiki
+«Развёртывание».
 
 ## Структура проекта
 
@@ -135,17 +153,20 @@ ru.bank.recommendation
 
 Полная документация — в [Wiki](https://github.com/StoneTower63/bank-recommendation-service/wiki):
 
+- [Главная](https://github.com/StoneTower63/bank-recommendation-service/wiki)
 - [Описание проекта](https://github.com/StoneTower63/bank-recommendation-service/wiki/Описание-проекта)
-- [Требования (FR + NFR)](https://github.com/StoneTower63/bank-recommendation-service/wiki/Требования)
-- [REST API](https://github.com/StoneTower63/bank-recommendation-service/wiki/REST-API)
+- [Требования (User Story + NFR)](https://github.com/StoneTower63/bank-recommendation-service/wiki/Требования)
+- [REST API (OpenAPI)](https://github.com/StoneTower63/bank-recommendation-service/wiki/REST-API)
+- [Архитектура](https://github.com/StoneTower63/bank-recommendation-service/wiki/Архитектура)
+- [Развёртывание](https://github.com/StoneTower63/bank-recommendation-service/wiki/Развёртывание)
 - [Трейсинг требований](https://github.com/StoneTower63/bank-recommendation-service/wiki/Трейсинг-требований)
 
 ## Команда
 
-- [StoneTower63](https://github.com/StoneTower63) — тимлид, разработчик, тестировщик
+- [StoneTower63](https://github.com/StoneTower63) — тимлид, разработчик, тестировщик, техническая документация
 - [arina-baglaeva](https://github.com/arina-baglaeva) — разработчик, тестировщик
 - [Annie-Falcon](https://github.com/Annie-Falcon) — разработчик, тестировщик
 
 ## Статус
 
-Учебный проект Skypro. Спринт 1, Спринт 2 и Спринт 3 завершены.
+Учебный проект Skypro. Спринты 1, 2, 3 и 4 завершены.
