@@ -2,6 +2,12 @@ package ru.bank.recommendation.model;
 
 import jakarta.persistence.*;
 
+/**
+ * JPA-сущность статистики срабатываний правила.
+ *
+ * Хранится в таблице {@code rule_stats} (PostgreSQL). Связана
+ * с {@link RuleEntity} через FK {@code rule_id}.
+ */
 @Entity
 @Table(name = "rule_stats")
 public class RuleStatsEntity {

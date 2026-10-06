@@ -1,11 +1,17 @@
 package ru.bank.recommendation.model;
 
+import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-import jakarta.persistence.*;
 
 import java.util.UUID;
 
+/**
+ * JPA-сущность динамического правила рекомендации.
+ *
+ * Хранится в таблице {@code rules} (PostgreSQL). Поле {@code rule}
+ * содержит JSON-массив запросов и мапится как {@code jsonb}.
+ */
 @Entity
 @Table(name = "rules")
 public class RuleEntity {
@@ -45,28 +51,28 @@ public class RuleEntity {
         return id;
     }
 
-    public String getProductName() {
-        return productName;
-    }
-
-    public UUID getProductId() {
-        return productId;
-    }
-
-    public String getRule() {
-        return rule;
-    }
-
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getProductName() {
+        return productName;
     }
 
     public void setProductName(String productName) {
         this.productName = productName;
     }
 
+    public UUID getProductId() {
+        return productId;
+    }
+
     public void setProductId(UUID productId) {
         this.productId = productId;
+    }
+
+    public String getRule() {
+        return rule;
     }
 
     public void setRule(String rule) {

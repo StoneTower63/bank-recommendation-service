@@ -1,9 +1,5 @@
 package ru.bank.recommendation.bot;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,20 +25,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
+
 @ExtendWith(MockitoExtension.class)
 class RecommendationBotTest {
-
-    @Mock
-    private TelegramClient telegramClient;
-
-    @Mock
-    private RecommendationRepository recommendationRepository;
-
-    @Mock
-    private RecommendationService recommendationService;
-
-    @InjectMocks
-    private RecommendationBot recommendationBot;
 
     private static final long TEST_CHAT_ID = 123456789L;
     private static final UUID TEST_USER_ID = UUID.randomUUID();
@@ -50,6 +38,15 @@ class RecommendationBotTest {
     private static final String TEST_LAST_NAME = "Иванов";
     private static final String FULL_NAME = TEST_FIRST_NAME + " " + TEST_LAST_NAME;
     private static final String COMMAND_TEXT = "/recommend " + FULL_NAME;
+    long testChatId = 123456789L;
+    @Mock
+    private TelegramClient telegramClient;
+    @Mock
+    private RecommendationRepository recommendationRepository;
+    @Mock
+    private RecommendationService recommendationService;
+    @InjectMocks
+    private RecommendationBot recommendationBot;
 
     private UserDto createTestUser() {
         return new UserDto(TEST_USER_ID, TEST_FIRST_NAME, TEST_LAST_NAME);
@@ -73,8 +70,6 @@ class RecommendationBotTest {
         when(update.getMessage().hasText()).thenReturn(true);
         return update;
     }
-
-    long testChatId = 123456789L;
 
     @Test
     @DisplayName("Должен отправить приветствие и помощь при получении команды /start")

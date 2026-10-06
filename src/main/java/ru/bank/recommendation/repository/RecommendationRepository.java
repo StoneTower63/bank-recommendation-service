@@ -2,6 +2,8 @@ package ru.bank.recommendation.repository;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -17,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 @Repository
 public class RecommendationRepository {
+    private static final Logger log = LoggerFactory.getLogger(RecommendationRepository.class);
     private final JdbcTemplate jdbcTemplate;
 
     private final Cache<CacheKey, Integer> countCache;
@@ -54,7 +57,7 @@ public class RecommendationRepository {
         CacheKey key = new CacheKey(userId.toString(), productType);
 
         return countCache.asMap().computeIfAbsent(key, k -> {
-            System.out.println("🔍 MISS (count): Запрос к БД для userId=" + userId + ", productType=" + productType);
+            log.debug("MISS (count): запрос к БД для userId={}, productType={}", userId, productType);
             Integer result = jdbcTemplate.queryForObject(
                     "SELECT COUNT(*) FROM transactions t JOIN products p ON t.product_id = p.id AND p.type = ? WHERE t.user_id = ?",
                     Integer.class, productType, userId);
@@ -66,7 +69,7 @@ public class RecommendationRepository {
         CacheKey key = new CacheKey(userId.toString(), productType, transactType);
 
         return sumCache.asMap().computeIfAbsent(key, k -> {
-            System.out.println("🔍 MISS (sum): Запрос к БД для userId=" + userId + ", productType=" + productType);
+            log.debug("MISS (sum): запрос к БД для userId={}, productType={}", userId, productType);
             Integer result = jdbcTemplate.queryForObject(
                     "SELECT sum(t.amount) FROM transactions t JOIN products p ON t.product_id = p.id AND p.type = ? WHERE t.user_id = ? AND t.type = ?",
                     Integer.class, productType, userId, transactType);
@@ -78,7 +81,7 @@ public class RecommendationRepository {
         CacheKey key = new CacheKey(userId.toString(), productType, transactionType + "_" + operation + "_" + numCompared);
 
         return checkCache.asMap().computeIfAbsent(key, k -> {
-            System.out.println("🔍 MISS (check): Запрос к БД для userId=" + userId);
+            log.debug("MISS (check): запрос к БД для userId={}", userId);
             String sql = "SELECT CASE WHEN SUM(t.amount) %s ? THEN 1 ELSE 0 END AS res FROM transactions t JOIN products p ON t.product_id = p.id AND p.type = ? WHERE t.user_id = ? AND t.type = ?";
             Boolean result = jdbcTemplate.queryForObject(
                     String.format(sql, operation.getSymbol()),
@@ -86,20 +89,21 @@ public class RecommendationRepository {
             return Boolean.TRUE.equals(result);
         });
     }
+
     public void clearAllCaches() {
         countCache.invalidateAll();
         sumCache.invalidateAll();
         checkCache.invalidateAll();
-        System.out.println("ВСЕ КЭШИ ОЧИЩЕНЫ!");
+        log.info("Все Caffeine-кеши очищены");
     }
 
     public List<UserDto> findUsersByName(String firstName, String lastName) {
         String sql = """
-        SELECT id, first_name, last_name
-        FROM users
-        WHERE LOWER(first_name) = LOWER(?)
-          AND LOWER(last_name) = LOWER(?)
-        """;
+                SELECT id, first_name, last_name
+                FROM users
+                WHERE LOWER(first_name) = LOWER(?)
+                  AND LOWER(last_name) = LOWER(?)
+                """;
         return jdbcTemplate.query(sql,
                 (rs, rowNum) -> new UserDto(
                         rs.getObject("id", UUID.class),

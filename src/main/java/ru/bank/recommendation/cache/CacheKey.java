@@ -2,6 +2,13 @@ package ru.bank.recommendation.cache;
 
 import java.util.Objects;
 
+/**
+ * Ключ для Caffeine-кеша.
+ *
+ * Комбинирует идентификатор пользователя, тип продукта и (опционально)
+ * тип транзакции. Реализует {@code equals} и {@code hashCode} для
+ * корректной работы кеша.
+ */
 public class CacheKey {
     private final String userId;
     private final String productType;

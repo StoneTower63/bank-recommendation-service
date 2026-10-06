@@ -3,6 +3,11 @@ package ru.bank.recommendation.model;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * DTO одного запроса (условия) динамического правила.
+ *
+ * Хранится в JSON-массиве в колонке {@code rule} таблицы {@code rules}.
+ */
 public class QueryDto {
     private String query;
     private List<String> arguments;

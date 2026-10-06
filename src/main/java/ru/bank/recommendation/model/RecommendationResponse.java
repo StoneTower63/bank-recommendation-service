@@ -3,8 +3,14 @@ package ru.bank.recommendation.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Ответ сервиса рекомендаций для клиента.
+ *
+ * Содержит id пользователя и список рекомендованных продуктов.
+ */
 public class RecommendationResponse {
     private UUID userId;
     private List<RecommendationDto> recommendations;
@@ -18,7 +24,7 @@ public class RecommendationResponse {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         RecommendationResponse that = (RecommendationResponse) o;
-        return userId != null ? userId.equals(that.userId) : that.userId == null;
+        return Objects.equals(userId, that.userId);
     }
 
     @Override

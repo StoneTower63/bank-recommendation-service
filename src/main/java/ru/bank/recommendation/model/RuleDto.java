@@ -6,6 +6,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * DTO динамического правила рекомендации.
+ *
+ * Используется в API {@code /rule} (создание, чтение) и при парсинге
+ * JSON-правил из БД.
+ */
 public class RuleDto {
     private Long id;
     @JsonProperty("product_name")

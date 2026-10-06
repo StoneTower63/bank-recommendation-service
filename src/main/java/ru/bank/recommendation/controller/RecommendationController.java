@@ -10,6 +10,11 @@ import ru.bank.recommendation.service.RecommendationService;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * REST-контроллер для получения рекомендаций клиента.
+ *
+ * Предоставляет эндпоинт {@code GET /recommendation/{user_id}}.
+ */
 @RestController
 @RequestMapping("/recommendation")
 public class RecommendationController {
@@ -20,6 +25,12 @@ public class RecommendationController {
         this.recommendationService = recommendationService;
     }
 
+    /**
+     * Возвращает список рекомендованных продуктов для клиента.
+     *
+     * @param userId идентификатор клиента (UUID из пути)
+     * @return список рекомендаций (может быть пустым)
+     */
     @GetMapping("/{user_id}")
     public List<RecommendationDto> getRecommendation(@PathVariable("user_id") UUID userId) {
         return recommendationService.getUserRecommendations(userId).getRecommendations();
