@@ -23,13 +23,20 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class QueryCheckerTest {
+    private final UUID userId = UUID.randomUUID();
     @Mock
     private RecommendationRepository repository;
-
     @InjectMocks
     private QueryChecker queryChecker;
 
-    private final UUID userId = UUID.randomUUID();
+    private static Stream<Arguments> comparisonArgs() {
+        return Stream.of(
+                Arguments.of(">", 100, 50, true),
+                Arguments.of("<", 30, 50, true),
+                Arguments.of("=", 50, 50, true),
+                Arguments.of(">=", 50, 50, true),
+                Arguments.of("<=", 40, 50, true));
+    }
 
     @Test
     void shouldReturnTrueWhenUserHasTransactionOfType() {
@@ -84,15 +91,6 @@ class QueryCheckerTest {
         boolean result = queryChecker.check(userId, dto);
 
         assertThat(result).isEqualTo(expected || actualSum > 0);
-    }
-
-    private static Stream<Arguments> comparisonArgs() {
-        return Stream.of(
-                Arguments.of(">", 100, 50, true),
-                Arguments.of("<", 30, 50, true),
-                Arguments.of("=", 50, 50, true),
-                Arguments.of(">=", 50, 50, true),
-                Arguments.of("<=", 40, 50, true));
     }
 
     @Test

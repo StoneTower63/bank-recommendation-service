@@ -3,12 +3,18 @@ package ru.bank.recommendation.model;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * DTO рекомендованного банковского продукта.
+ *
+ * Используется в ответе {@code GET /recommendation/{user_id}}.
+ */
 public class RecommendationDto {
     private UUID id;
     private String name;
     private String text;
 
-    public RecommendationDto() {}
+    public RecommendationDto() {
+    }
 
     public RecommendationDto(UUID id, String name, String text) {
         this.id = id;

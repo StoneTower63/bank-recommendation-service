@@ -9,12 +9,18 @@ import ru.bank.recommendation.repository.RuleRepository;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Сервис формирования рекомендаций для клиента.
+ *
+ * Загружает все динамические правила из PostgreSQL, проверяет каждое
+ * через {@link QueryChecker}, инкрементирует статистику срабатываний
+ * и формирует итоговый список рекомендованных продуктов.
+ */
 @Service
 public class RecommendationService {
     private final RuleRepository ruleRepository;
@@ -29,6 +35,20 @@ public class RecommendationService {
         this.ruleStatsService = ruleStatsService;
     }
 
+    /**
+     * Возвращает рекомендации для указанного пользователя.
+     *
+     * Алгоритм:
+     * <ol>
+     *     <li>Загружает все правила из БД.</li>
+     *     <li>Для каждого правила проверяет все условия (query).</li>
+     *     <li>Если все условия выполнены — инкрементирует счётчик правила.</li>
+     *     <li>Формирует список рекомендаций.</li>
+     * </ol>
+     *
+     * @param userId идентификатор клиента
+     * @return объект с userId и списком рекомендаций (может быть пустым)
+     */
     public RecommendationResponse getUserRecommendations(UUID userId) {
         List<RuleEntity> listRule = ruleRepository.findAll();
 

@@ -1,5 +1,10 @@
 package ru.bank.recommendation.enums;
 
+/**
+ * Оператор сравнения для запроса {@code TRANSACTION_SUM_COMPARE}.
+ *
+ * Поддерживает: {@code >}, {@code <}, {@code =}, {@code >=}, {@code <=}.
+ */
 public enum ComparisonOperator {
     GT(">"), LT("<"), EQ("="), GTE(">="), LTE("<=");
 

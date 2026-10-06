@@ -9,6 +9,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 
+/**
+ * Конфигурация DataSource для базы рекомендаций (H2, read-only).
+ *
+ * DataSource создаётся как HikariCP и работает в режиме read-only.
+ * Используется через {@code JdbcTemplate} с квалификатором
+ * {@code recommendationsJdbcTemplate}.
+ */
 @Configuration
 public class RecommendationsDataSourceConfiguration {
 

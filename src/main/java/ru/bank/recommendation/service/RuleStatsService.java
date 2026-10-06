@@ -7,6 +7,12 @@ import ru.bank.recommendation.model.RuleStatsEntity;
 import ru.bank.recommendation.repository.RuleRepository;
 import ru.bank.recommendation.repository.RuleStatsRepository;
 
+/**
+ * Сервис статистики срабатываний динамических правил.
+ *
+ * Инкрементирует счётчик правила атомарно. Если записи статистики
+ * для правила ещё нет — создаёт её со значением 1.
+ */
 @Service
 public class RuleStatsService {
 
@@ -19,6 +25,15 @@ public class RuleStatsService {
         this.ruleRepository = ruleRepository;
     }
 
+    /**
+     * Атомарно инкрементирует счётчик срабатываний правила.
+     *
+     * Если запись статистики для правила отсутствует, создаёт новую
+     * со значением 1. Это возможно, если правило сработало впервые.
+     *
+     * @param ruleId идентификатор правила
+     * @throws IllegalStateException если правило с указанным id не найдено
+     */
     @Transactional
     public void incrementCount(Long ruleId) {
         int updated = ruleStatsRepository.incrementCount(ruleId);

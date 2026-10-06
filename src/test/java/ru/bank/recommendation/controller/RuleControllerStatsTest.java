@@ -1,6 +1,5 @@
 package ru.bank.recommendation.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,13 +24,11 @@ public class RuleControllerStatsTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
-
     @MockitoBean
     private RuleService ruleService;
 
     @Test
-    @DisplayName("GET /rule/stats 200")
+    @DisplayName("GET /rule/stats: возвращает статистику по всем правилам, включая count=0")
     void shouldReturnStatsWithTwoRules() throws Exception {
 
         RuleStatsDto rule1 = new RuleStatsDto(1L, 5L);
@@ -46,7 +43,7 @@ public class RuleControllerStatsTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.stats").isArray())
                 .andExpect(jsonPath("$.stats").isNotEmpty())
-                .andExpect(jsonPath("$.stats").value(Matchers.hasSize(2)))//hasSize(2)
+                .andExpect(jsonPath("$.stats").value(Matchers.hasSize(2)))
                 .andExpect(jsonPath("$.stats[0].rule_id").value(1L))
                 .andExpect(jsonPath("$.stats[0].count").value(5L))
                 .andExpect(jsonPath("$.stats[1].rule_id").value(2L))
@@ -54,7 +51,7 @@ public class RuleControllerStatsTest {
     }
 
     @Test
-    @DisplayName("GET /rule/stats            200                ,                ")
+    @DisplayName("GET /rule/stats: возвращает пустой список, когда правил нет")
     void shouldReturnEmptyStatsList() throws Exception {
 
         when(ruleService.getStats()).thenReturn(new RuleStatsResponse(List.of()));

@@ -8,6 +8,12 @@ import org.springframework.context.annotation.Primary;
 
 import javax.sql.DataSource;
 
+/**
+ * Конфигурация DataSource для базы динамических правил (PostgreSQL).
+ *
+ * Использует {@link org.springframework.boot.jdbc.autoconfigure.DataSourceProperties},
+ * зарегистрированный как {@code @Primary} DataSource приложения.
+ */
 @Configuration
 public class DynamicRulesDataSourceConfiguration {
 

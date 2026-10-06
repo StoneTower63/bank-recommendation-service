@@ -39,7 +39,8 @@ public class RecommendationRepositoryTest {
                 .containsExactly(expectedUser);
     }
 
-    @Test void shouldReturnEmptyListIfNoMatch() {
+    @Test
+    void shouldReturnEmptyListIfNoMatch() {
         MockitoAnnotations.openMocks(this);
 
         given(jdbcTemplate.query(any(), any(RowMapper.class), any(), any())).willReturn(Collections.emptyList());

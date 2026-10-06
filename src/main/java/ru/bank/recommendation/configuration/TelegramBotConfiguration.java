@@ -11,6 +11,13 @@ import ru.bank.recommendation.bot.RecommendationBot;
 import ru.bank.recommendation.repository.RecommendationRepository;
 import ru.bank.recommendation.service.RecommendationService;
 
+/**
+ * Конфигурация Telegram-бота.
+ *
+ * Создаёт клиент Telegram, long-polling приложение и регистрирует
+ * {@link ru.bank.recommendation.bot.RecommendationBot}. Активируется
+ * только при {@code telegram.bot.enabled=true}.
+ */
 @Configuration
 @ConditionalOnProperty(name = "telegram.bot.enabled", havingValue = "true", matchIfMissing = false)
 public class TelegramBotConfiguration {
@@ -30,7 +37,6 @@ public class TelegramBotConfiguration {
                                                TelegramBotsLongPollingApplication application,
                                                RecommendationRepository recommendationRepository,
                                                RecommendationService recommendationService,
-                                               @Value("${telegram.bot.username}") String botUsername,
                                                @Value("${telegram.bot.token}") String botToken) {
         RecommendationBot bot = new RecommendationBot(
                 telegramClient,

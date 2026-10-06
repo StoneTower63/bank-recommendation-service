@@ -2,6 +2,9 @@ package ru.bank.recommendation.model;
 
 import java.util.List;
 
+/**
+ * Ответ API со списком всех динамических правил.
+ */
 public class RulesResponseDto {
     private List<RuleDto> data;
 
